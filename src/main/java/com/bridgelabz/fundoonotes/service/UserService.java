@@ -10,6 +10,8 @@ public interface UserService {
 
 	public void register(UserDTO userDto);
 	
+	public void verifyUser(String token);
+	
 	public List<User> getAllUsers();
 	
 	//public String login()

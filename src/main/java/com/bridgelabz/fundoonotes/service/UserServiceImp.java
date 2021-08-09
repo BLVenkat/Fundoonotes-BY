@@ -13,6 +13,8 @@ import com.bridgelabz.fundoonotes.dto.UserDTO;
 import com.bridgelabz.fundoonotes.entity.User;
 import com.bridgelabz.fundoonotes.exception.FundooException;
 import com.bridgelabz.fundoonotes.repository.UserRepository;
+import com.bridgelabz.fundoonotes.utils.EmailService;
+import com.bridgelabz.fundoonotes.utils.TokenService;
 
 @Service
 public class UserServiceImp  implements UserService{
@@ -22,6 +24,12 @@ public class UserServiceImp  implements UserService{
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private TokenService tokenService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Override
 	public void register(UserDTO userDto) {
@@ -36,12 +44,26 @@ public class UserServiceImp  implements UserService{
 		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		BeanUtils.copyProperties(userDto, user);
 		user.setIsVerified(false);
-		userRepository.save(user);
+		User savedUser = userRepository.save(user);
+		boolean isEmailSent = emailService.sendMail("Verify Your Email", "http://localhost:8081/user/verify/"+tokenService.createToken(savedUser.getId()), savedUser.getEmailId(), "venakattestmail@gmail.com");
+		if(!isEmailSent)
+			throw new FundooException(HttpStatus.BAD_REQUEST.value(), "User is registered but error while sending email verification link");
 	}
 
+	
 	@Override
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
+	}
+
+
+	@Override
+	public void verifyUser(String token) {
+		Long userId = tokenService.decodeToken(token);
+		User user = userRepository.findById(userId).orElseThrow(
+				                          () -> new FundooException(HttpStatus.NOT_FOUND.value(), "User Not Found"));
+		user.setIsVerified(true);
+		userRepository.save(user);
 	}
 
 }

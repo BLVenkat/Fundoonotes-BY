@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +42,13 @@ public class UserController {
 		List<User> users = userService.getAllUsers();
 		return new ResponseEntity<Response>(
 				new Response(HttpStatus.OK.value(), "Users Fetched Successfully", users), HttpStatus.OK);
+	}
+	
+	@PutMapping("/verify/{token}")
+	public ResponseEntity<Response> verifyEmail(@PathVariable String token) {
+	   userService.verifyUser(token);
+		return new ResponseEntity<Response>(
+				new Response(HttpStatus.OK.value(), "Email Verified Successfully", ""), HttpStatus.OK);
 	}
 
 }

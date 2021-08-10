@@ -8,6 +8,8 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,12 +17,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDTO {
 
+	@ApiModelProperty(required =true,notes = "Should start with capital letter" )
 	@NotBlank(message = "Firstname cannot be blank")
 	private String firstName;
 	
 	@NotBlank(message = "Lastname cannot be blank")
 	private String lastName;
 	
+	@ApiModelProperty(required =true,notes = "Should be a valid mail",example = "venkat@gmail.com")
 	@Email(message = "EmailId is not valid")
 	private String emailId;
 	

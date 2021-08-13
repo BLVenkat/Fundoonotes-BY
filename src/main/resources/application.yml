@@ -4,6 +4,12 @@ spring:
     url: jdbc:mysql://${dbhost}:3306/${database}?useSSL=false
     username: ${dbuser}
     password: ${dbpassword}
+aws:
+  s3:
+    bucket: ${bucketname}
+    access: ${accesskey}
+    secret: ${secretkey}
+    region: ${region}
 server:
   port: 8080
   
@@ -14,6 +20,12 @@ spring:
     url: jdbc:mysql://${dbhost}:3306/${database}?useSSL=false
     username: ${dbuser}
     password: ${dbpassword}
+aws:
+  s3:
+    bucket: ${bucketname}
+    access: ${accesskey}
+    secret: ${secretkey}
+    region: ${region}
 server:
   port: 8080
 ---
@@ -23,5 +35,11 @@ spring:
     url: jdbc:mysql://${dbhost}:3306/${database}?useSSL=false
     username: ${dbuser}
     password: ${dbpassword}
+aws:
+  s3:
+    bucket: ${bucketname}
+    access: ${accesskey}
+    secret: ${secretkey}
+    region: ${region}
 server:
   port: 8080

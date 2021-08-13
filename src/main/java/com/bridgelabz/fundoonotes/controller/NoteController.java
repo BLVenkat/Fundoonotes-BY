@@ -6,12 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.bridgelabz.fundoonotes.configuration.ApplicationConfig;
 import com.bridgelabz.fundoonotes.dto.NoteDTO;
 import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.response.Response;
@@ -48,5 +53,12 @@ public class NoteController {
 	   List<Note> notes = noteService.getNotes(token);
 		return new ResponseEntity<Response>(
 				new Response(HttpStatus.OK.value(), "Notes Fetched Successfully", notes), HttpStatus.OK);
+	}
+	
+	@PutMapping(value = "/image/{noteId}")
+	public ResponseEntity<Response> addImage(@RequestHeader String token,@PathVariable Long noteId,@RequestParam MultipartFile file){
+		
+		String key = noteService.addImage(token, noteId, file);
+		return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(),"Image Added to note Successfully" , key), HttpStatus.OK);
 	}
 }

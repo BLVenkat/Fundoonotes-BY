@@ -50,6 +50,7 @@ public class User {
 	
 	private Boolean isVerified;
 	
+	private String profilePicURL;
 	@JsonIgnore
 	private String password;
 	

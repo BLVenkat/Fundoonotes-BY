@@ -1,5 +1,7 @@
 package com.bridgelabz.fundoonotes.utils;
 
+import java.util.Date;
+
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,16 @@ public class TokenService {
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		JwtBuilder builder = Jwts.builder().setId(String.valueOf(id))
 				// .setExpiration(new Date (System.currentTimeMillis()+( 180 * 1000)))
+				.signWith(signatureAlgorithm, DatatypeConverter.parseString(TOKEN_SECRET));
+		return builder.compact();
+
+	}
+	
+	public String createToken(Long id, Date expireTime) {
+
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+		JwtBuilder builder = Jwts.builder().setId(String.valueOf(id))
+				 .setExpiration(expireTime)
 				.signWith(signatureAlgorithm, DatatypeConverter.parseString(TOKEN_SECRET));
 		return builder.compact();
 

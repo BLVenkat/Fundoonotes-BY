@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bridgelabz.fundoonotes.configuration.ApplicationConfig;
+import com.bridgelabz.fundoonotes.dto.LoginDTO;
 import com.bridgelabz.fundoonotes.dto.UserDTO;
 import com.bridgelabz.fundoonotes.entity.User;
 import com.bridgelabz.fundoonotes.response.Response;
@@ -48,7 +51,7 @@ public class UserController {
 			return new ResponseEntity<Response>(new Response(HttpStatus.UNPROCESSABLE_ENTITY.value(), bindingResult.getAllErrors().get(0).getDefaultMessage(), ""),HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 		userService.register(userDto);
-		return new ResponseEntity<Response>(new Response(HttpStatus.CREATED.value(), "User Registered Successfully", ""), HttpStatus.CREATED);
+		return new ResponseEntity<Response>(new Response(HttpStatus.CREATED.value(), ApplicationConfig.getMessageAccessor("Success").getMessage("350"), ""), HttpStatus.CREATED);
 	}
 	
 	@GetMapping()
@@ -56,7 +59,7 @@ public class UserController {
 	public ResponseEntity<Response> getAllUser() {
 		List<User> users = userService.getAllUsers();
 		return new ResponseEntity<Response>(
-				new Response(HttpStatus.OK.value(), "Users Fetched Successfully", users), HttpStatus.OK);
+				new Response(HttpStatus.OK.value(),ApplicationConfig.getMessageAccessor("error").getMessage("350"), users), HttpStatus.OK);
 	}
 	
 	@PutMapping("/verify/{token}")
@@ -68,4 +71,27 @@ public class UserController {
 				new Response(HttpStatus.OK.value(), "Email Verified Successfully", ""), HttpStatus.OK);
 	}
 
+	@PostMapping("/login")
+	@ApiOperation("Api to login user to application")
+	public ResponseEntity<Response> login(@RequestBody LoginDTO loginDto) {
+	   String token = userService.login(loginDto);
+		return new ResponseEntity<Response>(
+				new Response(HttpStatus.OK.value(), "User Login Successfully", token), HttpStatus.OK);
+	}
+	
+	@PutMapping("/forgotpassword/{emailId}")
+	@ApiOperation("Api to send a password rest link")
+	public ResponseEntity<Response> forgotPassword(@PathVariable String emailId) {
+	   userService.forgotPassword(emailId);
+		return new ResponseEntity<Response>(
+				new Response(HttpStatus.OK.value(), "Reset Link Has to Email Successfully", ""), HttpStatus.OK);
+	}
+	
+	@PutMapping("/resetpassword/{password}")
+	@ApiOperation("Api to rest password")
+	public ResponseEntity<Response> resetPassword(@RequestHeader String token,@PathVariable String password) {
+	   userService.restPassword(password, token);
+		return new ResponseEntity<Response>(
+				new Response(HttpStatus.OK.value(), "Password Rested Successfully", ""), HttpStatus.OK);
+	}
 }

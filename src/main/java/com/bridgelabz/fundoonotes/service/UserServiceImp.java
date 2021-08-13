@@ -1,5 +1,6 @@
 package com.bridgelabz.fundoonotes.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.bridgelabz.fundoonotes.dto.LoginDTO;
 import com.bridgelabz.fundoonotes.dto.UserDTO;
 import com.bridgelabz.fundoonotes.entity.User;
 import com.bridgelabz.fundoonotes.exception.FundooException;
@@ -64,6 +66,53 @@ public class UserServiceImp  implements UserService{
 				                          () -> new FundooException(HttpStatus.NOT_FOUND.value(), "User Not Found"));
 		user.setIsVerified(true);
 		userRepository.save(user);
+	}
+
+
+	@Override
+	public String login(LoginDTO loginDto) {
+		User user =  getUser(loginDto.getEmailId());		
+		if(!user.getIsVerified()) {
+			throw new FundooException(HttpStatus.UNAUTHORIZED.value(), "Email is not verified");
+		}
+		
+		if(user.getEmailId().equals(loginDto.getEmailId()) && passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+			return tokenService.createToken(user.getId());
+		}else {
+			throw new FundooException(HttpStatus.UNAUTHORIZED.value(), "Email or password is in correct");
+		}
+		
+	}
+
+
+	@Override
+	public void forgotPassword(String emailId) {
+		User user = getUser(emailId);
+		String token = tokenService.createToken(user.getId(), new Date (System.currentTimeMillis()+( 180 * 1000)));
+		boolean isEmailSent = emailService.sendMail("Rest Your Password", "http://localhost:8081/user/restpassword/"+token, user.getEmailId(), "venakattestmail@gmail.com");
+		if(!isEmailSent) {
+			throw new FundooException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Please try again");
+		}
+	}
+
+	@Override
+	public void restPassword(String password, String token) {
+			Long userId = tokenService.decodeToken(token);
+			User user = getUser(userId);
+			int rowsAffected = userRepository.updatePassword(passwordEncoder.encode(password), user.getId());
+			System.out.println(rowsAffected);
+			//user.setPassword(passwordEncoder.encode(password));
+			//userRepository.save(user);
+	}
+	
+	public User getUser(String emailId) {
+		return userRepository.findByEmailId(emailId).orElseThrow(
+                () -> new FundooException(HttpStatus.NOT_FOUND.value(), "Email is Not Registered"));
+	}
+	
+	public User getUser(Long userId) {
+		return userRepository.findById(userId).orElseThrow(
+                () -> new FundooException(HttpStatus.NOT_FOUND.value(), "User Not Found"));
 	}
 
 }

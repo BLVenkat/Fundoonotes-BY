@@ -2,6 +2,8 @@ package com.bridgelabz.fundoonotes.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,7 @@ public class NoteController {
 	@PostMapping(value = {"","/"})
 	@ApiOperation("Api to create note for  a user")
 	public ResponseEntity<Response> createNote(@RequestHeader String token, @RequestBody NoteDTO noteDto) {
-	   noteService.createNote(token, noteDto);
+				noteService.createNote(token, noteDto);
 		return new ResponseEntity<Response>(
 				new Response(HttpStatus.CREATED.value(), "Note Created Successfully", ""), HttpStatus.CREATED);
 	}

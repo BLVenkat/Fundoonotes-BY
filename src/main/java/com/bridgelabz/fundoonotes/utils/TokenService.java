@@ -5,7 +5,10 @@ import java.util.Date;
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import com.bridgelabz.fundoonotes.exception.FundooException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -39,9 +42,15 @@ public class TokenService {
 	}
 
 	public Long decodeToken(String token) {
-		Claims claim = Jwts.parser().setSigningKey(DatatypeConverter.parseString(TOKEN_SECRET)).parseClaimsJws(token)
-				.getBody();
-		return Long.parseLong(claim.getId());
+		try {
+			Claims claim = Jwts.parser().setSigningKey(DatatypeConverter.parseString(TOKEN_SECRET)).parseClaimsJws(token)
+					.getBody();
+			return Long.parseLong(claim.getId());
 
+		} catch (Exception e) {
+			throw new FundooException(HttpStatus.BAD_REQUEST.value(),"Error while decoding token");
+
+		}
+		
 	}
 }

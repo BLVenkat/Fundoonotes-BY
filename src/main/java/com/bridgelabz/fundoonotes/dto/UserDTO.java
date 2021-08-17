@@ -8,6 +8,8 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.bridgelabz.fundoonotes.validators.ValidEmail;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,7 +27,8 @@ public class UserDTO {
 	private String lastName;
 	
 	@ApiModelProperty(required =true,notes = "Should be a valid mail",example = "venkat@gmail.com")
-	@Email(message = "EmailId is not valid")
+	//@Email(message = "EmailId is not valid")
+	@ValidEmail(message = "Please provide proper email")
 	private String emailId;
 	
 	@Length(min =10,max = 10 ,message = "Phonenumber is not valid")

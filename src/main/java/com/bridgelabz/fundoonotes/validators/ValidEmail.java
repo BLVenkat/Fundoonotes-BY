@@ -10,7 +10,7 @@ import javax.validation.Payload;
 
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD})
+@Target({ ElementType.FIELD,ElementType.METHOD})
 @Constraint(validatedBy = EmailValidator.class)
 public @interface ValidEmail {
 

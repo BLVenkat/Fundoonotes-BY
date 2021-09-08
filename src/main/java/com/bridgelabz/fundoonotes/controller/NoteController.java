@@ -23,6 +23,7 @@ import com.bridgelabz.fundoonotes.dto.NoteDTO;
 import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.response.Response;
 import com.bridgelabz.fundoonotes.service.NoteService;
+import com.bridgelabz.fundoonotes.utils.TokenService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -32,6 +33,9 @@ public class NoteController {
 
 	@Autowired
 	private NoteService noteService;
+	
+	@Autowired
+	private TokenService tokenService;
 	
 	@PostMapping(value = {"","/"})
 	@ApiOperation("Api to create note for  a user")
@@ -49,10 +53,11 @@ public class NoteController {
 				new Response(HttpStatus.CREATED.value(), "Notes Created Successfully", ""), HttpStatus.CREATED);
 	}
 	
-	@GetMapping()
+	@GetMapping("/{pageNumber}/{pageSize}")
 	@ApiOperation("Api to get  notes of a user")
-	public ResponseEntity<Response> getNotes(@RequestHeader String token) {
-	   List<Note> notes = noteService.getNotes(token);
+	public ResponseEntity<Response> getNotes(@RequestHeader String token,@PathVariable int pageNumber, @PathVariable int pageSize) {
+			//Long userId = tokenService.decodeToken(token);
+		List<Note> notes = noteService.getNotes(token,pageNumber,pageSize);
 		return new ResponseEntity<Response>(
 				new Response(HttpStatus.OK.value(), "Notes Fetched Successfully", notes), HttpStatus.OK);
 	}

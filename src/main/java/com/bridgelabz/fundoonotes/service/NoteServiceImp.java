@@ -1,9 +1,12 @@
 package com.bridgelabz.fundoonotes.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,22 +40,48 @@ public class NoteServiceImp implements NoteService{
 	@Autowired
 	private NoteImageRepository noteImageRepo;
 	
+	@Autowired
+	private Map<Long, User> cacheMap;
+	
 	@Override
-	public void createNote(String token, NoteDTO noteDto) {
+	//@CachePut(value = "notes",key = "#token")
+	public List<Note> createNote(String token, NoteDTO noteDto) {
 		User user = getUser(tokenService.decodeToken(token));
 		Note note = new Note();
 		BeanUtils.copyProperties(noteDto, note);
 		Note savedNote = noteRepository.save(note);
 		user.getNotes().add(savedNote);
-		userRepository.save(user);
+		User savedUser = userRepository.save(user);
+		return savedUser.getNotes();
+		
+     //cacheMap.put(user.getId().toString(), savedUser.getNotes());
+
+//		if(cacheMap.containsKey(user.getId().toString())) {
+//			cacheMap.(user.getId().toString(), savedUser.getNotes());
+//		}else {
+//			
+//		}
+
 	}
 	
 	
 
 	@Override
-	public List<Note> getNotes(String token) {
+	//@Cacheable(value = "notes",key = "#token")
+	public List<Note> getNotes(String token,int pageNumber,int pageSize) {
 		User user = getUser(tokenService.decodeToken(token));
-		return user.getNotes();
+		//User user = getUser(Long.parseLong(userId));
+
+		return null;
+//		if(cacheMap.containsKey(user.getId().toString())) {
+//			System.out.println("from cache");
+//			return cacheMap.get(user.getId().toString());
+//		}
+//		cacheMap.put(user.getId().toString(), user.getNotes());
+//		return user.getNotes();
+
+		//Pageable pageable = PageRequest.of(pageNumber, pageSize,Sort.by("createdTimeStamp"));
+		// noteRepository.findAll(pageable).toList();
 	}
 	
 	public User getUser(Long userId) {

@@ -1,5 +1,6 @@
 package com.bridgelabz.fundoonotes.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,7 +34,9 @@ import lombok.NoArgsConstructor;
 //       indexes = @Index(name = "mulitIndex1", 
 //                        columnList = "firstName, lastName",  
 //                        unique=true))
-public class User {
+public class User  implements Serializable{
+
+	private static final long serialVersionUID = 7337529020223496451L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -64,6 +69,7 @@ public class User {
 	@UpdateTimestamp
 	private LocalDateTime updatedTimeStamp;
 	
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@OneToMany(targetEntity = Note.class)
 	@JoinColumn(name = "user_id")
 	private List<Note> notes;

@@ -22,12 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bridgelabz.fundoonotes.configuration.ApplicationConfig;
 import com.bridgelabz.fundoonotes.dto.LoginDTO;
 import com.bridgelabz.fundoonotes.dto.UserDTO;
+import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.entity.User;
 import com.bridgelabz.fundoonotes.response.Response;
 import com.bridgelabz.fundoonotes.service.UserService;
+import com.bridgelabz.fundoonotes.utils.ProducerService;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -41,6 +42,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private ProducerService producerService;
+	
 	@PostMapping("/register")
 	@ApiOperation(value = "Api to register a user for fundoonotes application",response = Response.class)
 	@ApiResponses(value = {
@@ -103,5 +107,16 @@ public class UserController {
 		String key = userService.profilePic(token, file);
 		
 		return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), "User Profile Updated Successfully", key),HttpStatus.OK); 
+	}
+	@GetMapping("/send/{message}")
+	public String sendMessage(@PathVariable String message) {
+		//producerService.sendMessage(message);
+		for(int i =0;i<5;i++) {
+		Note note = new Note();
+		note.setTitle("to topic "+i);
+		note.setDescription("to topic "+i);
+		producerService.sendMessage(note);
+		}
+		return "Message has sent to Topic";
 	}
 }

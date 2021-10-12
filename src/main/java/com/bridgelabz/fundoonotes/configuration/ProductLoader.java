@@ -34,6 +34,7 @@ public class ProductLoader implements MapLoader<Long, User>, MapLoaderLifecycleS
 
 	@Override
 	public User load(Long key) {
+		System.out.println(key);
 		return userRepository.findById(key).get();
 	}
 
@@ -46,7 +47,9 @@ public class ProductLoader implements MapLoader<Long, User>, MapLoaderLifecycleS
 		productMap.put(key, product);
 		  }
 		}
-		return productMap;	}
+		System.out.println(productMap);
+		return productMap;	
+		}
 
 	@Override
 	public Iterable<Long> loadAllKeys() {
